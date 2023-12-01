@@ -23,6 +23,7 @@ public class HealthCheckController {
 
         Map<String, Object> healthCheckData = new HashMap<>();
         healthCheckData.put("actor", "김준일");
+        healthCheckData.put("git_username", "code1218");
         healthCheckData.put("serverName", serverName);
         healthCheckData.put("env", env);
         healthCheckData.put("visitedCount", visitedCount);
