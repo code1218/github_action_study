@@ -44,18 +44,17 @@ jobs:
         run: |
           STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.NGINX_IP }}/env")
           echo $STATUS
-          if [ $STATUS -eq 404 ]; then
+          if [ $STATUS = 404 ]; then
             CURRENT_UPSTREAM=blue
           else
             CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.NGINX_IP }}/env")
-            echo $CURRENT_UPSTREAM
           fi
-          
-          if [ $CURRENT_UPSTREAM -eq blue ]; then
+          echo $CURRENT_UPSTREAM
+          if [ $CURRENT_UPSTREAM = blue ]; then
             echo "CURRENT_IP=${{ secrets.BLUE_IP }}" >> $GITHUB_ENV
             echo "STOPPED_IP=${{ secrets.GREEN_IP }}" >> $GITHUB_ENV
             echo "TARGET_UPSTREAM=green" >> $GITHUB_ENV
-          elif [ $CURRENT_UPSTREAM -eq green ]; then
+          elif [ $CURRENT_UPSTREAM = green ]; then
             echo "CURRENT_IP=${{ secrets.GREEN_IP }}" >> $GITHUB_ENV
             echo "STOPPED_IP=${{ secrets.BLUE_IP }}" >> $GITHUB_ENV
             echo "TARGET_UPSTREAM=blue" >> $GITHUB_ENV
