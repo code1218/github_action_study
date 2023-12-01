@@ -42,7 +42,7 @@ jobs:
     steps:
       - name: Set target IP
         run: |
-          STATUS=$(curl -o "http://${{ secrets.NGINX_IP }}/env")
+          STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.NGINX_IP }}/env")
           echo $STATUS
           if [ $STATUS -eq 400 ]; then
             CURRENT_UPSTREAM=blue
