@@ -101,7 +101,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           username: ubuntu
-          host: ${{ secrets.CURRENT_IP }}
+          host: ${{ env.CURRENT_IP }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
