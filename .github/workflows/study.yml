@@ -42,11 +42,14 @@ jobs:
     steps:
       - name: Set target IP
         run: |
-          CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.NGINX_IP }}/env")
-          echo $CURRENT_UPSTREAM
-          if [ $CURRENT_UPSTREAM -ne blue -o $CURRENT_UPSTREAM -ne green ]; then
+          STATUS=$(curl -o "http://${{ secrets.NGINX_IP }}/env")
+          echo $STATUS
+          if [ $STATUS -eq 400 ]; then
             CURRENT_UPSTREAM=blue
           fi
+          
+          CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.NGINX_IP }}/env")
+          echo $CURRENT_UPSTREAM
           if [ $CURRENT_UPSTREAM -eq blue ]; then
             echo "CURRENT_IP=${{ secrets.BLUE_IP }}" >> $GITHUB_ENV
             echo "STOPPED_IP=${{ secrets.GREEN_IP }}" >> $GITHUB_ENV
