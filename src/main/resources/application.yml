@@ -3,8 +3,8 @@ spring:
     active: local
     group:
       local: common, secret
-      prod1: common, prod1-server, secret
-      prod2: common, prod2-server, secret
+      blue: common, blue, secret
+      green: common, green, secret
 
 server:
   env: blue
@@ -16,6 +16,37 @@ spring:
   config:
     activate:
       on-profile: common
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            clientId: 2dc5c2ec61e5efeb6b952c1b5d381821
+            redirectUri: http://localhost:8080/login/oauth2/code/kakao
+            authorizationGrantType: authorization_code
+            clientAuthenticationMethod: POST
+            clientName: Kakao
+          naver:
+            clientId: i4eW_RUc74M3Ci96bJuG
+            redirectUri: http://localhost:8080/login/oauth2/code/naver
+            authorizationGrantType: authorization_code
+            clientAuthenticationMethod: POST
+            clientName: Naver
+        provider:
+          kakao:
+            authorizationUri: https://kauth.kakao.com/oauth/authorize
+            tokenUri: https://kauth.kakao.com/oauth/token
+            userInfoUri: https://kapi.kakao.com/v2/user/me
+            userNameAttribute: id
+          naver:
+            authorizationUri: https://nid.naver.com/oauth2.0/authorize
+            tokenUri: https://nid.naver.com/oauth2.0/token
+            userInfoUri: https://openapi.naver.com/v1/nid/me
+            userNameAttribute: response
+
+mybatis:
+  mapper-locations:
+    - /mappers/*.xml
 
 serverName: common
 
@@ -25,12 +56,12 @@ serverName: common
 spring:
   config:
     activate:
-      on-profile: prod1-server
+      on-profile: blue
 
 server:
   port: 8080
 
-serverName: prod1
+serverName: blue_server
 
 ---
 
@@ -38,9 +69,9 @@ serverName: prod1
 spring:
   config:
     activate:
-      on-profile: prod2-server
+      on-profile: green
 
 server:
   port: 8081
 
-serverName: prod2
+serverName: green_server

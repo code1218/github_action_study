@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aws.compass.repository.AcademyMapper">
+    <resultMap id="academyMap" type="com.aws.compass.entity.Academy">
+        <id property="ACADEMY_ID" column="ACADEMY_ID" />
+        <result property="ATPT_OFCDC_SC_CODE" column="ATPT_OFCDC_SC_CODE" />
+        <result property="ATPT_OFCDC_SC_NM" column="ATPT_OFCDC_SC_NM" />
+        <result property="ADMST_ZONE_NM" column="ADMST_ZONE_NM" />
+        <result property="ACA_INSTI_SC_NM" column="ACA_INSTI_SC_NM" />
+        <result property="ACA_ASNUM" column="ACA_ASNUM" />
+        <result property="ACA_NM" column="ACA_NM" />
+        <result property="ESTBL_YMD" column="ESTBL_YMD" />
+        <result property="REG_YMD" column="REG_YMD" />
+        <result property="REG_STTUS_NM" column="REG_STTUS_NM" />
+        <result property="CAA_BEGIN_YMD" column="CAA_BEGIN_YMD" />
+        <result property="CAA_END_YMD" column="CAA_END_YMD" />
+        <result property="TOFOR_SMTOT" column="TOFOR_SMTOT" />
+        <result property="DTM_RCPTN_ABLTY_NMPR_SMTOT" column="DTM_RCPTN_ABLTY_NMPR_SMTOT" />
+        <result property="REALM_SC_NM" column="REALM_SC_NM" />
+        <result property="LE_ORD_NM" column="LE_ORD_NM" />
+        <result property="LE_CRSE_LIST_NM" column="LE_CRSE_LIST_NM" />
+        <result property="LE_CRSE_NM" column="LE_CRSE_NM" />
+        <result property="PSNBY_THCC_CNTNT" column="PSNBY_THCC_CNTNT" />
+        <result property="THCC_OTHBC_YN" column="THCC_OTHBC_YN" />
+        <result property="BRHS_ACA_YN" column="BRHS_ACA_YN" />
+        <result property="FA_RDNMA" column="FA_RDNMA" />
+        <result property="FA_RDNDA" column="FA_RDNDA" />
+        <result property="FA_RDNZC" column="FA_RDNZC" />
+        <result property="FA_TELNO" column="FA_TELNO" />
+        <result property="LOAD_DTM" column="LOAD_DTM" />
+        <result property="logoImg" column="logo_img" />
+        <result property="like_count" column="LIKE_COUNT" />
+        <result property="avg_score" column="AVG_SCORE" />
+    </resultMap>
+
+    <resultMap id="academyRegistrationMap" type="com.aws.compass.entity.AcademyRegistration">
+        <id property="academyRegistrationId" column="academy_registration_id"/>
+        <result property="academyId" column="ACADEMY_ID"/>
+        <result property="acaAsnum" column="ACA_ASNUM"/>
+        <result property="acaNm" column="ACA_NM"/>
+        <result property="admstZoneNm" column="ADMST_ZONE_NM"/>
+        <result property="match" column="match"/>
+        <result property="userId" column="user_id"/>
+        <result property="name" column="name"/>
+        <result property="businessRegistrationFile" column="business_registration_file"/>
+        <result property="idFile" column="id_file"/>
+        <result property="operationRegistrationFile" column="operation_registration_file"/>
+        <result property="approvalStatus" column="approval_status"/>
+        <result property="rejectReason" column="reject_reason"/>
+    </resultMap>
+
+    <resultMap id="academyInfoMap" type="com.aws.compass.entity.AcademyInfo">
+        <id property="academyInfoId" column="academy_info_id" />
+        <result property="ACADEMY_ID" column="ACADEMY_ID" />
+        <result property="userId" column="user_id" />
+        <result property="logoImg" column="logo_img" />
+        <result property="classSize" column="class_size" />
+        <result property="coursePeriod" column="course_period" />
+        <result property="purpose" column="purpose" />
+        <result property="homePage" column="home_page" />
+        <result property="phone" column="phone" />
+    </resultMap>
+
+    <resultMap id="convenienceMap" type="com.aws.compass.entity.Convenience">
+        <id property="convenienceId" column="convenience_id" />
+        <result property="convenienceName" column="convenience_name" />
+    </resultMap>
+
+    <resultMap id="ageMap" type="com.aws.compass.entity.Age">
+        <id property="ageId" column="age_id" />
+        <result property="ageRange" column="age_range" />
+    </resultMap>
+
+    <resultMap id="classInfoMap" type="com.aws.compass.entity.ClassInfo">
+        <id property="classInfoId" column="class_info_id" />
+        <result property="className" column="class_name" />
+        <result property="classPrice" column="class_price" />
+    </resultMap>
+
+    <resultMap id="reviewMap" type="com.aws.compass.entity.Review">
+        <id property="reviewId" column="review_id" />
+        <result property="ACADEMY_ID" column="ACADEMY_ID" />
+        <result property="userId" column="user_id" />
+        <result property="score" column="score" />
+        <result property="reviewContent" column="review_content" />
+    </resultMap>
+
+    <update id="updateAcademyRegist">
+        update
+            academy_registration_tb
+        set
+            approval_status = 0,
+            business_registration_file = #{businessRegistrationFile},
+            id_file = #{idFile},
+            operation_registration_file =
+            <choose>
+                <when test='operationRegistrationFile==null or operationRegistrationFile.equals("")'>
+                    null,
+                </when>
+                <otherwise>
+                    #{operationRegistrationFile},
+                </otherwise>
+            </choose>
+            reject_reason = null
+        where
+            ACADEMY_ID = #{academyId}
+    </update>
+    <update id="updateAcademyInfo" parameterType="com.aws.compass.entity.AcademyInfo">
+        update
+            academy_info_tb
+        set
+            logo_img = #{logoImg},
+            class_size = #{classSize},
+            course_period = #{coursePeriod},
+            purpose = #{purpose},
+            home_page = #{homePage},
+            phone = #{phone}
+        where
+            academy_info_id = #{academyInfoId}
+    </update>
+    <delete id="deleteConvenience">
+        delete from
+            academy_convenience_tb
+        where
+            academy_info_id = #{academy_info_id}
+    </delete>
+    <delete id="deleteAge">
+        delete from
+            attendance_age_tb
+        where
+            academy_info_id = #{academy_info_id}
+    </delete>
+    <delete id="deleteClassInfo">
+        delete from
+            class_info_tb
+        where
+            academy_info_id = #{academy_info_id}
+    </delete>
+
+    <update id="updateReview">
+        update
+        	review_tb
+        set
+        	score = #{score},
+            review_content = #{reviewContent}
+        where
+            ACADEMY_ID = #{ACADEMY_ID} and user_id = #{userId};
+    </update>
+
+    <delete id="deleteReview">
+        delete from review_tb
+        where
+            ACADEMY_ID = #{academyId}
+            and user_id = #{userId};
+    </delete>
+
+    <select id="getListTotalCount" resultType="int" parameterType="com.aws.compass.vo.AcademySearchVo">
+        select
+            count(*)
+        FROM
+            academy_tb
+        WHERE
+            1 = 1
+            <if test="atptOfcdcScCode != null and !atptOfcdcScCode.equals('')">
+                AND ATPT_OFCDC_SC_CODE = #{atptOfcdcScCode}
+            </if>
+            <if test="admstZoneNm != null and !admstZoneNm.equals('')">
+                AND ADMST_ZONE_NM = #{admstZoneNm}
+            </if>
+            <if test="acaAsnum != null and !acaAsnum.equals('')">
+                AND ACA_ASNUM = #{acaAsnum}
+            </if>
+            <if test="acaNm != null and !acaNm.equals('')">
+                AND ACA_NM LIKE CONCAT('%', #{acaNm}, '%')
+            </if>
+            <if test="realmScNm != null and !realmScNm.equals('')">
+                AND REALM_SC_NM = #{realmScNm}
+            </if>
+            <if test="leOrdNm != null and !leOrdNm.equals('')">
+                AND LE_ORD_NM = #{leOrdNm}
+            </if>
+            <if test="leCrseNm != null and !leCrseNm.equals('')">
+                AND LE_CRSE_NM = #{leCrseNm}
+            </if>
+            <if test="ageIds != null and !ageIds.isEmpty()">
+                AND ACADEMY_ID IN (
+                    SELECT
+                        ait.ACADEMY_ID
+                    FROM
+                        academy_tb at
+                        LEFT OUTER JOIN academy_info_tb ait ON ait.ACADEMY_ID = at.ACADEMY_ID
+                        LEFT OUTER JOIN attendance_age_tb aat ON aat.academy_info_id = ait.academy_info_id
+                    WHERE
+                        aat.age_id IN
+                        <foreach collection="ageIds" item="ageId" open="(" separator="," close=")">
+                            #{ageId}
+                        </foreach>
+                    GROUP BY
+                        ait.ACADEMY_ID
+                    HAVING
+                        COUNT(DISTINCT aat.age_id) = #{countAgeId}
+                )
+            </if>
+            <if test="convenienceIds != null and !convenienceIds.isEmpty()">
+                AND ACADEMY_ID IN (
+                    SELECT
+                        ait.ACADEMY_ID
+                    FROM
+                        academy_tb at
+                        LEFT OUTER JOIN academy_info_tb ait ON ait.ACADEMY_ID = at.ACADEMY_ID
+                        LEFT OUTER JOIN academy_convenience_tb act ON act.academy_info_id = ait.academy_info_id
+                    WHERE
+                        act.convenience_id IN
+                        <foreach collection="convenienceIds" item="convenienceId" open="(" separator="," close=")">
+                            #{convenienceId}
+                        </foreach>
+                    GROUP BY
+                        ait.ACADEMY_ID
+                    HAVING
+                        COUNT(DISTINCT act.convenience_id) = #{countConvenienceId}
+                )
+            </if>
+    </select>
+
+    <select id="getAcademies" parameterType="com.aws.compass.vo.AcademySearchVo" resultMap="academyMap">
+        SELECT
+            at.ACADEMY_ID,
+            at.ATPT_OFCDC_SC_CODE,
+            at.ADMST_ZONE_NM,
+            at.ACA_ASNUM,
+            at.ACA_NM,
+            at.REALM_SC_NM,
+            at.LE_CRSE_NM,
+            at.FA_RDNMA,
+            at.FA_RDNDA,
+            at.FA_RDNZC,
+            at.FA_TELNO,
+            ait.logo_img,
+            IFNULL(lt.LIKE_COUNT, 0) AS LIKE_COUNT,
+            IFNULL(rt.AVG_SCORE, 0) AS AVG_SCORE
+        FROM
+            academy_tb at
+            left outer join academy_info_tb ait ON (ait.ACADEMY_ID = at.ACADEMY_ID)
+            left outer join (
+                SELECT ACADEMY_ID, COUNT(*) AS LIKE_COUNT
+                FROM like_tb
+                GROUP BY ACADEMY_ID
+            ) lt ON lt.ACADEMY_ID = at.ACADEMY_ID
+            left outer join (
+                SELECT ACADEMY_ID, AVG(score) AS AVG_SCORE
+                FROM review_tb
+                GROUP BY ACADEMY_ID
+            ) rt ON rt.ACADEMY_ID = at.ACADEMY_ID
+        WHERE
+            1 = 1
+            <if test="atptOfcdcScCode != null and !atptOfcdcScCode.equals('')">
+                AND at.ATPT_OFCDC_SC_CODE = #{atptOfcdcScCode}
+            </if>
+            <if test="admstZoneNm != null and !admstZoneNm.equals('')">
+                AND at.ADMST_ZONE_NM = #{admstZoneNm}
+            </if>
+            <if test="acaAsnum != null and !acaAsnum.equals('')">
+                AND at.ACA_ASNUM = #{acaAsnum}
+            </if>
+            <if test="acaNm != null and !acaNm.equals('')">
+                AND at.ACA_NM LIKE CONCAT('%', #{acaNm}, '%')
+            </if>
+            <if test="realmScNm != null and !realmScNm.equals('')">
+                AND at.REALM_SC_NM = #{realmScNm}
+            </if>
+            <if test="leOrdNm != null and !leOrdNm.equals('')">
+                AND at.LE_ORD_NM = #{leOrdNm}
+            </if>
+            <if test="leCrseNm != null and !leCrseNm.equals('')">
+                AND at.LE_CRSE_NM = #{leCrseNm}
+            </if>
+            <if test="ageIds != null and !ageIds.isEmpty()">
+                AND at.ACADEMY_ID IN (
+                    SELECT
+                        ait.ACADEMY_ID
+                    FROM
+                        academy_tb at
+                        LEFT OUTER JOIN academy_info_tb ait ON ait.ACADEMY_ID = at.ACADEMY_ID
+                        LEFT OUTER JOIN attendance_age_tb aat ON aat.academy_info_id = ait.academy_info_id
+                    WHERE
+                        aat.age_id IN
+                        <foreach collection="ageIds" item="ageId" open="(" separator="," close=")">
+                            #{ageId}
+                        </foreach>
+                    GROUP BY
+                        ait.ACADEMY_ID
+                    HAVING
+                        COUNT(DISTINCT aat.age_id) = #{countAgeId}
+                )
+            </if>
+            <if test="convenienceIds != null and !convenienceIds.isEmpty()">
+                AND at.ACADEMY_ID IN (
+                    SELECT
+                        ait.ACADEMY_ID
+                    FROM
+                        academy_tb at
+                        LEFT OUTER JOIN academy_info_tb ait ON ait.ACADEMY_ID = at.ACADEMY_ID
+                        LEFT OUTER JOIN academy_convenience_tb act ON act.academy_info_id = ait.academy_info_id
+                    WHERE
+                        act.convenience_id IN
+                        <foreach collection="convenienceIds" item="convenienceId" open="(" separator="," close=")">
+                            #{convenienceId}
+                        </foreach>
+                    GROUP BY
+                        ait.ACADEMY_ID
+                    HAVING
+                        COUNT(DISTINCT act.convenience_id) = #{countConvenienceId}
+                )
+            </if>
+        GROUP BY
+            at.ACADEMY_ID
+        ORDER BY
+            CASE
+                WHEN #{classify} = '등록순' THEN ait.academy_info_id
+                WHEN #{classify} = '좋아요순' THEN LIKE_COUNT
+                WHEN #{classify} = '별점순' THEN AVG_SCORE
+                ELSE ait.ACADEMY_ID
+            END DESC
+        LIMIT #{index}, #{pSize}
+    </select>
+
+    <insert id="academyRegist" parameterType="com.aws.compass.entity.AcademyRegistration">
+        insert into academy_registration_tb
+        values(
+            0,
+            #{academyId},
+            #{match},
+            #{userId},
+            #{businessRegistrationFile},
+            #{idFile},
+            <choose>
+                <when test='operationRegistrationFile==null or operationRegistrationFile.equals("")'>
+                    null,
+                </when>
+                <otherwise>
+                    #{operationRegistrationFile},
+                </otherwise>
+            </choose>
+            0,
+            null
+        )
+    </insert>
+
+    <insert id="writeReview">
+        insert into review_tb
+        values(0, #{ACADEMY_ID}, #{userId}, #{score}, #{reviewContent});
+    </insert>
+    <insert id="insertConvenience">
+        insert into academy_convenience_tb
+        values(0, #{academyInfoId}, #{convenienceId})
+    </insert>
+    <insert id="insertAge">
+        insert into attendance_age_tb
+        values(0, #{academyInfoId}, #{ageId})
+    </insert>
+    <insert id="insertClassInfo">
+        insert into class_info_tb
+        values(0, #{academyInfoId}, #{classInfo.className}, #{classInfo.classPrice})
+    </insert>
+
+    <select id="academyDuplicate" resultType="java.lang.Integer">
+        select
+        	if(count(*) > 0, 1, 0) as result
+        from
+        	academy_registration_tb
+        where
+        	ACADEMY_ID = #{academyId};
+    </select>
+
+    <select id="getAcademy" resultType="com.aws.compass.entity.Academy">
+        select
+        	at.ACADEMY_ID,
+        	at.ACA_NM,
+        	at.FA_RDNMA,
+        	at.FA_RDNDA,
+            at.REALM_SC_NM,
+            at.LE_CRSE_LIST_NM,
+            at.FA_TELNO
+        from
+        	academy_tb at
+        where
+            at.ACADEMY_ID = #{ACADEMY_ID}
+    </select>
+
+    <select id="getAcademyInfo" resultMap="academyInfoMap">
+        select
+            ait.ACADEMY_ID,
+            ait.academy_info_id,
+            ait.user_id,
+        	ait.logo_img,
+        	ait.class_size,
+        	ait.course_period,
+        	ait.purpose,
+        	ait.home_page,
+        	ait.phone
+        from
+        	academy_info_tb ait
+        where
+            ait.ACADEMY_ID = #{ACADEMY_ID}
+    </select>
+
+    <select id="getConvenience" resultMap="convenienceMap">
+        select
+            act.convenience_id,
+            ct.convenience_name
+        from
+            academy_convenience_tb act
+            left outer join academy_info_tb ait on(ait.academy_info_id = act.academy_info_id)
+            left outer join convenience_tb ct on(ct.convenience_id = act.convenience_id)
+        where
+            ait.ACADEMY_ID = #{ACADEMY_ID}
+    </select>
+
+    <select id="getAgeRange" resultMap="ageMap">
+        select
+            aat.age_id,
+        	agt.age_range
+        from
+            attendance_age_tb aat
+            left outer join academy_info_tb ait on(ait.academy_info_id = aat.academy_info_id)
+        	left outer join age_tb agt on(agt.age_id = aat.age_id)
+        where
+            ait.ACADEMY_ID = #{ACADEMY_ID}
+    </select>
+
+    <select id="getClassInfo" resultMap="classInfoMap">
+        select
+            cit.class_info_id,
+            cit.class_name,
+            cit.class_price
+        from
+            class_info_tb cit
+            left outer join academy_info_tb ait on(ait.academy_info_id = cit.academy_info_id)
+        where
+            ait.ACADEMY_ID = #{ACADEMY_ID}
+    </select>
+      
+    <select id="getAppliedAcademyRegistrations" resultMap="academyRegistrationMap" parameterType="map">
+        select
+            art.academy_registration_id,
+            art.ACADEMY_ID,
+            at.ACA_ASNUM,
+            at.ACA_NM,
+            at.ADMST_ZONE_NM,
+            art.match,
+            art.user_id,
+            art.business_registration_file,
+            art.id_file,
+            art.operation_registration_file,
+            art.approval_status,
+            art.reject_reason
+        from
+            academy_registration_tb art
+            left outer join academy_tb at on(at.ACADEMY_ID = art.ACADEMY_ID)
+        where
+            art.user_id = #{userId}
+            and art.approval_status &lt; 1
+        order by
+            art.approval_status asc,
+            art.academy_registration_id desc
+        limit #{index}, 5
+    </select>
+
+    <select id="getAppliedAcademyCount" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            academy_registration_tb art
+        where
+            user_id = #{userId}
+            and art.approval_status &lt; 1
+    </select>
+
+    <select id="getMyAcademyRegistrations" resultMap="academyRegistrationMap" parameterType="map">
+        select
+            art.academy_registration_id,
+            art.ACADEMY_ID,
+            at.ACA_ASNUM,
+            at.ACA_NM,
+            at.ADMST_ZONE_NM,
+            art.match,
+            art.user_id,
+            art.business_registration_file,
+            art.id_file,
+            art.operation_registration_file,
+            art.approval_status,
+            art.reject_reason
+        from
+            academy_registration_tb art
+                left outer join academy_tb at on(at.ACADEMY_ID = art.ACADEMY_ID)
+        where
+            art.user_id = #{userId}
+            and art.approval_status = 1
+        order by
+            art.academy_registration_id desc
+        limit #{index}, 5
+    </select>
+    <select id="getMyAcademyCount" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            academy_registration_tb art
+        where
+            user_id = #{userId}
+            and art.approval_status = 1
+    </select>
+
+    <select id="getAcademyReviews" resultMap="reviewMap">
+        select
+        	rt.review_id,
+            rt.ACADEMY_ID,
+            rt.user_id,
+            rt.score,
+            rt.review_content,
+            ut.nickname
+        from
+        	review_tb rt
+            left outer join user_tb ut on(ut.user_id = rt.user_id)
+        where
+            rt.ACADEMY_ID = #{academyId}
+        order by
+            review_id desc
+        limit #{index}, 5
+    </select>
+
+    <select id="getAcademyReviewCount" resultType="com.aws.compass.entity.ReviewCount">
+        select
+        	count(review_id) as reviewCount,
+        	Round(avg(score), 1) as scoreAvg
+        from
+        	review_tb
+        where
+        	ACADEMY_ID = #{academyId};
+    </select>
+
+    <select id="reviewDuplicate" resultType="java.lang.Integer">
+        select
+        	if(count(*) > 0, 1, 0) as result
+        from
+        	review_tb
+        where
+        	ACADEMY_ID = #{ACADEMY_ID} and user_id = #{userId};
+    </select>
+
+    <select id="getMyReview" resultMap="reviewMap">
+        select
+            rt.review_id,
+            rt.ACADEMY_ID,
+            rt.user_id,
+            rt.score,
+            rt.review_content,
+            ut.nickname
+        from
+            review_tb rt
+            left outer join user_tb ut on(ut.user_id = rt.user_id)
+        where
+            rt.ACADEMY_ID = #{academyId} and rt.user_id = #{userId};
+    </select>
+    <select id="getRegisteredAcademy" resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            academy_info_tb
+        where
+            ACADEMY_ID = #{academyId}
+    </select>
+    <select id="getAcademyByuserId" resultType="com.aws.compass.entity.Academy">
+        select
+            ait.ACADEMY_ID,
+            at.ACA_NM
+        from
+            academy_info_tb ait
+            left outer join academy_tb at on(at.ACADEMY_ID = ait.ACADEMY_ID)
+        where
+            ait.user_id = #{userId}
+    </select>
+    <select id="getAcademyLogoImg" resultType="java.lang.String">
+        select
+            logo_img
+        from
+            academy_info_tb
+        where
+            ACADEMY_ID = #{ACADEMY_ID}
+    </select>
+</mapper>

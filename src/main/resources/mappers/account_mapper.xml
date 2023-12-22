@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aws.compass.repository.AccountMapper">
+    <resultMap id="userMap" type="com.aws.compass.entity.User">
+        <id property="userId" column="user_id"/>
+        <result property="email" column="email"/>
+        <result property="oauth2Id" column="oauth2_id"/>
+        <result property="name" column="name"/>
+        <result property="nickname" column="nickname"/>
+        <result property="phone" column="phone"/>
+        <result property="provider" column="provider"/>
+        <result property="enabled" column="enabled"/>
+        <result property="roleId" column="role_id"/>
+    </resultMap>
+
+    <resultMap id="reviewMap" type="com.aws.compass.entity.Review">
+        <id property="reviewId" column="review_id" />
+        <result property="ACADEMY_ID" column="ACADEMY_ID" />
+        <result property="userId" column="user_id" />
+        <result property="score" column="score" />
+        <result property="reviewContent" column="review_content" />
+        <result property="academyName" column="ACA_NM" />
+    </resultMap>
+  
+    <resultMap id="academyMap" type="com.aws.compass.entity.Academy">
+        <id property="ACADEMY_ID" column="ACADEMY_ID" />
+        <result property="ATPT_OFCDC_SC_CODE" column="ATPT_OFCDC_SC_CODE" />
+        <result property="ATPT_OFCDC_SC_NM" column="ATPT_OFCDC_SC_NM" />
+        <result property="ADMST_ZONE_NM" column="ADMST_ZONE_NM" />
+        <result property="ACA_INSTI_SC_NM" column="ACA_INSTI_SC_NM" />
+        <result property="ACA_ASNUM" column="ACA_ASNUM" />
+        <result property="ACA_NM" column="ACA_NM" />
+        <result property="ESTBL_YMD" column="ESTBL_YMD" />
+        <result property="REG_YMD" column="REG_YMD" />
+        <result property="REG_STTUS_NM" column="REG_STTUS_NM" />
+        <result property="CAA_BEGIN_YMD" column="CAA_BEGIN_YMD" />
+        <result property="CAA_END_YMD" column="CAA_END_YMD" />
+        <result property="TOFOR_SMTOT" column="TOFOR_SMTOT" />
+        <result property="DTM_RCPTN_ABLTY_NMPR_SMTOT" column="DTM_RCPTN_ABLTY_NMPR_SMTOT" />
+        <result property="REALM_SC_NM" column="REALM_SC_NM" />
+        <result property="LE_ORD_NM" column="LE_ORD_NM" />
+        <result property="LE_CRSE_LIST_NM" column="LE_CRSE_LIST_NM" />
+        <result property="LE_CRSE_NM" column="LE_CRSE_NM" />
+        <result property="PSNBY_THCC_CNTNT" column="PSNBY_THCC_CNTNT" />
+        <result property="THCC_OTHBC_YN" column="THCC_OTHBC_YN" />
+        <result property="BRHS_ACA_YN" column="BRHS_ACA_YN" />
+        <result property="FA_RDNMA" column="FA_RDNMA" />
+        <result property="FA_RDNDA" column="FA_RDNDA" />
+        <result property="FA_RDNZC" column="FA_RDNZC" />
+        <result property="FA_TELNO" column="FA_TELNO" />
+        <result property="LOAD_DTM" column="LOAD_DTM" />
+        <result property="logoImg" column="logo_img" />
+        <result property="like_count" column="LIKE_COUNT" />
+        <result property="avg_score" column="AVG_SCORE" />
+    </resultMap>
+
+
+    <insert id="insertLike">
+        insert into like_tb
+        values(0, #{userId}, #{academyId})
+    </insert>
+
+    <update id="updateUser">
+        update
+            user_tb
+        set
+            email = #{email},
+            name = #{name},
+            nickname = #{nickname},
+            phone = #{phone},
+            enabled = #{enabled}
+        where
+            user_id = #{userId}
+    </update>
+
+    <update id="updateEnabledToEmail">
+        update
+            user_tb
+        set
+            enabled = 1
+        where
+            email = #{email}
+    </update>
+
+    <delete id="deleteLike">
+        delete
+        from
+            like_tb
+        where
+            user_id = #{userId}
+            and ACADEMY_ID = #{academyId}
+    </delete>
+
+    <delete id="deleteUser">
+        delete
+        from
+        	user_tb
+        where
+        	user_id = #{userId}
+    </delete>
+
+    <select id="findUserByEmail" resultMap="userMap">
+        select
+            user_id,
+            email,
+            oauth2_id,
+            name,
+            nickname,
+            phone,
+            provider,
+            enabled,
+            role_id
+        from
+            user_tb
+        where
+            email = #{email}
+    </select>
+
+    <select id="checkDuplicateAndIdNot"
+            parameterType="com.aws.compass.entity.User"
+            resultType="java.lang.Integer">
+        select
+            (select
+                if(count(*) > 0, 1, 0)
+            from
+                user_tb
+            where
+                email = #{email}
+                and user_id != #{userId}
+            )
+            + (select
+                if(count(*) > 0, 2, 0)
+            from
+                user_tb
+            where
+                nickname = #{nickname}
+                and user_id != #{userId}
+            ) as result
+    </select>
+
+    <select id="getLikeState"
+            resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            like_tb
+        where
+            user_id = #{userId}
+            and ACADEMY_ID = #{academyId}
+
+    </select>
+
+    <select id="getLikeCountByUserId"
+            resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            like_tb
+        where
+            user_id = #{userId}
+    </select>
+
+    <select id="getLikeAcademies"
+            resultMap="academyMap">
+        SELECT
+            at.ACADEMY_ID,
+            at.ACA_NM,
+            at.REALM_SC_NM,
+            at.FA_RDNMA,
+            ait.logo_img,
+            IFNULL(clt.LIKE_COUNT, 0) AS LIKE_COUNT,
+            IFNULL(AVG(rt.score), 0) AS AVG_SCORE
+        FROM
+            like_tb lt
+            LEFT OUTER JOIN academy_tb at ON (at.ACADEMY_ID = lt.ACADEMY_ID)
+            LEFT OUTER JOIN academy_info_tb ait ON (ait.ACADEMY_ID = lt.ACADEMY_ID)
+            LEFT OUTER JOIN review_tb rt ON (rt.ACADEMY_ID = lt.ACADEMY_ID)
+            LEFT OUTER JOIN (
+                SELECT ACADEMY_ID, COUNT(*) AS LIKE_COUNT
+                FROM like_tb
+                GROUP BY ACADEMY_ID
+            ) clt ON clt.ACADEMY_ID = at.ACADEMY_ID
+        where
+            lt.user_id = #{userId}
+        group by
+            at.ACADEMY_ID
+        order by
+            lt.like_id desc
+        limit #{index}, 9
+    </select>
+
+    <select id="getLikeCountByAcademyId"
+            resultType="java.lang.Integer">
+        select
+            count(*)
+        from
+            like_tb
+        where
+            academy_id = #{academyId}
+    </select>
+
+    <select id="getUserReviews" resultMap="reviewMap">
+        select
+        	rt.review_id,
+        	rt.ACADEMY_ID,
+        	rt.user_id,
+        	rt.score,
+        	rt.review_content,
+        	at.ACA_NM
+        from
+        	review_tb rt
+        	left outer join academy_tb at on(at.ACADEMY_ID = rt.ACADEMY_ID)
+        where
+        	rt.user_id = #{userId}
+        order by
+            review_id desc
+        limit #{index}, 5
+    </select>
+    <select id="getUserReviewCount" resultType="com.aws.compass.entity.ReviewCount">
+        select
+        	count(review_id) as reviewCount
+        from
+        	review_tb
+        where
+        	user_id = #{userId};
+    </select>
+</mapper>

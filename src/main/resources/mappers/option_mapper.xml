@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aws.compass.repository.OptionMapper">
+
+    <resultMap id="educationOfficeMap" type="com.aws.compass.entity.EducationOffice">
+        <id property="educationOfficeId" column="education_office_id" />
+        <result property="educationOfficeName" column="education_office_name" />
+        <result property="educationOfficeCode" column="education_office_code" />
+    </resultMap>
+    <resultMap id="administrativeDistrictMap" type="com.aws.compass.entity.AdministrativeDistrict">
+        <id property="administrativeDistrictId" column="administrative_district_id" />
+        <result property="educationOfficeCode" column="education_office_code" />
+        <result property="administrativeDistrictName" column="administrative_district_name" />
+    </resultMap>
+    <resultMap id="categoryMap" type="com.aws.compass.entity.Category">
+        <id property="categoryId" column="category_id" />
+        <result property="categoryValue" column="category_value" />
+        <result property="categoryName" column="category_name" />
+    </resultMap>
+    <resultMap id="categoryDetailMap" type="com.aws.compass.entity.CategoryDetail">
+        <id property="categoryDetailId" column="category_detail_id" />
+        <result property="categoryValue" column="category_value" />
+        <result property="categoryDetailValue" column="category_detail_value" />
+        <result property="categoryDetailName" column="category_detail_name" />
+    </resultMap>
+    <resultMap id="convenienceMap" type="com.aws.compass.entity.Convenience">
+        <id property="convenienceId" column="convenience_id" />
+        <result property="convenienceName" column="convenience_name" />
+    </resultMap>
+    <resultMap id="ageMap" type="com.aws.compass.entity.Age">
+        <id property="ageId" column="age_id" />
+        <result property="ageRange" column="age_range" />
+    </resultMap>
+
+
+    <select id="getEducationOfficeList" resultMap="educationOfficeMap">
+        select
+            education_office_id,
+            education_office_name,
+            education_office_code
+        from
+            education_office_tb
+    </select>
+
+    <select id="getAdministrativeDistrictList"   resultMap="administrativeDistrictMap">
+        select
+            administrative_district_id,
+            education_office_code,
+            administrative_district_name
+        from
+            administrative_district_tb
+    </select>
+
+    <select id="getCategoryList" resultMap="categoryMap">
+        select
+            category_id,
+            category_value,
+            category_name
+        from
+            category_tb
+    </select>
+    <select id="getCategoryDetailList" resultMap="categoryDetailMap">
+        select
+            category_detail_id,
+            category_value,
+            category_detail_value,
+            category_detail_name
+        from
+            category_detail_tb
+    </select>
+    <select id="getConvenienceList" resultMap="convenienceMap">
+        select
+            convenience_id,
+            convenience_name
+        from
+            convenience_tb
+        order by
+            convenience_id
+    </select>
+    <select id="getAgeList" resultMap="ageMap">
+        select
+            age_id,
+            age_range
+        from
+            age_tb
+        order by
+            age_id
+    </select>
+
+</mapper>

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aws.compass.repository.AuthMapper">
+    <resultMap id="userMap" type="com.aws.compass.entity.User">
+        <id property="userId" column="user_id"/>
+        <result property="email" column="email"/>
+        <result property="oauth2Id" column="oauth2_id"/>
+        <result property="name" column="name"/>
+        <result property="nickname" column="nickname"/>
+        <result property="phone" column="phone"/>
+        <result property="provider" column="provider"/>
+        <result property="enabled" column="enabled"/>
+        <result property="roleId" column="role_id"/>
+    </resultMap>
+    <insert id="saveUser">
+        insert into user_tb
+        values(
+            0,
+            #{email},
+            #{oauth2Id},
+            #{name},
+            #{nickname},
+            #{phone},
+            #{provider},
+            0,
+            1
+        )
+    </insert>
+
+    <select id="findUserByOauth2Id" resultMap="userMap">
+        select
+            user_id,
+            email,
+            oauth2_id,
+            name,
+            nickname,
+            phone,
+            provider,
+            enabled,
+            role_id
+        from
+            user_tb
+        where
+            oauth2_id = #{oauth2Id}
+
+    </select>
+    <select id="checkDuplicate"
+            parameterType="com.aws.compass.entity.User"
+            resultType="java.lang.Integer">
+        select
+            (select
+                if(count(*) > 0, 1, 0)
+            from
+                user_tb
+            where
+                email = #{email}
+            )
+            + (select
+                if(count(*) > 0, 2, 0)
+            from
+                user_tb
+            where
+                nickname = #{nickname}
+            ) as result
+    </select>
+</mapper>
