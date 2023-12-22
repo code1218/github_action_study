@@ -49,8 +49,7 @@ jobs:
           else
             CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}/env")
           fi
-          echo $CURRENT_UPSTREAM
-          echo "CURRENT_UPSTREAM = ${{CURRENT_UPSTREAM}}" >> $GITHUB_ENV
+          echo $CURRENT_UPSTREAM >> $GITHUB_ENV
           if [ $CURRENT_UPSTREAM = blue ]; then
             echo "CURRENT_PORT=8080" >> $GITHUB_ENV
             echo "STOPPED_PORT=8081" >> $GITHUB_ENV
