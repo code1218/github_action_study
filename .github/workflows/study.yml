@@ -42,21 +42,22 @@ jobs:
     steps:
       - name: Set target IP
         run: |
-          STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.NGINX_IP }}/env")
+          STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.LIVE_SERVER_IP }}/env")
           echo $STATUS
           if [ $STATUS = 404 ]; then
             CURRENT_UPSTREAM=blue
           else
-            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.NGINX_IP }}/env")
+            CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}/env")
           fi
           echo $CURRENT_UPSTREAM
+          echo $CURRENT_UPSTREAM >> $GITHUB_ENV
           if [ $CURRENT_UPSTREAM = blue ]; then
-            echo "CURRENT_IP=${{ secrets.BLUE_IP }}" >> $GITHUB_ENV
-            echo "STOPPED_IP=${{ secrets.GREEN_IP }}" >> $GITHUB_ENV
+            echo "CURRENT_PORT=8080" >> $GITHUB_ENV
+            echo "STOPPED_PORT=8081" >> $GITHUB_ENV
             echo "TARGET_UPSTREAM=green" >> $GITHUB_ENV
           elif [ $CURRENT_UPSTREAM = green ]; then
-            echo "CURRENT_IP=${{ secrets.GREEN_IP }}" >> $GITHUB_ENV
-            echo "STOPPED_IP=${{ secrets.BLUE_IP }}" >> $GITHUB_ENV
+            echo "CURRENT_PORT=8081" >> $GITHUB_ENV
+            echo "STOPPED_PORT=8080" >> $GITHUB_ENV
             echo "TARGET_UPSTREAM=blue" >> $GITHUB_ENV
           else
             echo "error"
@@ -67,23 +68,17 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           username: ubuntu
-          host: ${{ env.STOPPED_IP }}
+          host: ${{ secrets.LIVE_SERVER_IP }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
-            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/server:latest
-            sudo docker-compose up -d
+            sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/live_server:latest
+            sudo docker-compose -f docker-compose-${{env.TARGET_UPSTREAM}} up -d
       
-      - name: Check deploy server URL PORT 8080
+      - name: Check deploy server URL
         uses: jtalk/url-health-check-action@v3
         with:
-          url: http://${{ env.STOPPED_IP }}:8080/env
-          max-attempts: 3
-          retry-delay: 10s
-      - name: Check deploy server URL PORT 8081
-        uses: jtalk/url-health-check-action@v3
-        with:
-          url: http://${{ env.STOPPED_IP }}:8081/env
+          url: http://${{ secrets.LIVE_SERVER_IP }}:${{env.STOPPED_PORT}}/env
           max-attempts: 3
           retry-delay: 10s
 
@@ -91,22 +86,20 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           username: ubuntu
-          host: ${{ secrets.NGINX_IP }}
+          host: ${{ secrets.LIVE_SERVER_IP }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
-            sudo docker exec -i nginxserver bash -c 'echo "set \$server_env ${{ env.TARGET_UPSTREAM }};" > /etc/nginx/conf.d/server-env.inc && nginx -s reload' 
+            sudo docker exec -i webserver bash -c 'echo "set \$server_url ${{ env.TARGET_UPSTREAM }};" > /etc/nginx/conf.d/server-env.inc && nginx -s reload' 
 
       - name: Stop current server
         uses: appleboy/ssh-action@master
         with:
           username: ubuntu
-          host: ${{ env.CURRENT_IP }}
+          host: ${{ secrets.LIVE_SERVER_IP }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script_stop: true
           script: |
-            sudo docker stop prod1
-            sudo docker stop prod2
-            sudo docker rm prod1
-            sudo docker rm prod2
+            sudo docker stop ${{env.CURRENT_UPSTREAM}}
+            sudo docker rm ${{env.CURRENT_UPSTREAM}}
           
