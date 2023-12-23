@@ -15,6 +15,11 @@ public class HealthCheckController {
     private String serverName;
     @Value("${server.env}")
     private String env;
+    @Value("${server.address}")
+    private String serverAddress;
+    @Value("${server.port}")
+    private String port;
+
     private Integer visitedCount = 0;
 
     @GetMapping("/hc")
@@ -24,6 +29,8 @@ public class HealthCheckController {
         Map<String, Object> healthCheckData = new HashMap<>();
         healthCheckData.put("serverName", serverName);
         healthCheckData.put("env", env);
+        healthCheckData.put("address", serverAddress);
+        healthCheckData.put("port", port);
         healthCheckData.put("visitedCount", visitedCount);
         return ResponseEntity.ok(healthCheckData);
     }

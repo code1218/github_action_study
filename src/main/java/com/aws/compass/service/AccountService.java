@@ -12,6 +12,7 @@ import com.aws.compass.repository.AccountMapper;
 import com.aws.compass.security.PrincipalUser;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,6 +33,9 @@ public class AccountService {
     private final JavaMailSender javaMailSender;
     private final JwtProvider jwtProvider;
     private final AuthService authService;
+
+    @Value("${server.address}")
+    private String serverAddress;
 
     public boolean updateUser(int userId, EditUserReqDto editUserReqDto) {
         User newUser = editUserReqDto.toUser();
