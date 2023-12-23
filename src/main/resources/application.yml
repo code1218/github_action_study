@@ -62,14 +62,13 @@ spring:
             redirectUri: http://localhost:8080/login/oauth2/code/naver
 
 server:
-  port: 8080
-  address: localhost
+  port: "8080"
+  address: "localhost"
 
 serverName: local
 
 ---
 
-# ??1 ??(prod1)
 spring:
   config:
     activate:
@@ -83,14 +82,13 @@ spring:
           naver:
             redirectUri: http://localhost:8080/login/oauth2/code/naver
 server:
-  port: 8080
-  address: 3.37.230.177
+  port: "8080"
+  address: "3.37.230.177"
 
 serverName: blue_server
 
 ---
 
-# ??2 ??(prod2)
 spring:
   config:
     activate:
@@ -105,7 +103,7 @@ spring:
             redirectUri: http://localhost:8080/login/oauth2/code/naver
 
 server:
-  port: 8081
-  address: 3.37.230.177
+  port: "8081"
+  address: "3.37.230.177"
 
 serverName: green_server
