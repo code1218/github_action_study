@@ -85,7 +85,7 @@ server:
   port: "8080"
   address: "3.37.230.177"
 
-serverName: blue_server
+serverName: blue_server2
 
 ---
 
@@ -106,4 +106,4 @@ server:
   port: "8081"
   address: "3.37.230.177"
 
-serverName: green_server
+serverName: green_server2
