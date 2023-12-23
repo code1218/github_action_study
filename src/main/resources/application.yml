@@ -85,7 +85,7 @@ server:
   port: 8080
   serverAddress: 3.37.230.177
 
-serverName: blue_server2
+serverName: blue_server
 
 ---
 
@@ -106,4 +106,4 @@ server:
   port: 8081
   serverAddress: 3.37.230.177
 
-serverName: green_server2
+serverName: green_server
