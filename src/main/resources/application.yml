@@ -62,8 +62,8 @@ spring:
             redirectUri: http://localhost:8080/login/oauth2/code/naver
 
 server:
-  port: "8080"
-  address: "localhost"
+  port: 8080
+  serverAddress: localhost
 
 serverName: local
 
@@ -82,8 +82,8 @@ spring:
           naver:
             redirectUri: http://localhost:8080/login/oauth2/code/naver
 server:
-  port: "8080"
-  address: "3.37.230.177"
+  port: 8080
+  serverAddress: 3.37.230.177
 
 serverName: blue_server2
 
@@ -103,7 +103,7 @@ spring:
             redirectUri: http://localhost:8080/login/oauth2/code/naver
 
 server:
-  port: "8081"
-  address: "3.37.230.177"
+  port: 8081
+  serverAddress: 3.37.230.177
 
 serverName: green_server2

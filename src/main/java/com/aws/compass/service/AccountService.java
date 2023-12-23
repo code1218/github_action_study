@@ -34,7 +34,7 @@ public class AccountService {
     private final JwtProvider jwtProvider;
     private final AuthService authService;
 
-    @Value("${server.address}")
+    @Value("${server.serverAddress}")
     private String serverAddress;
 
     public boolean updateUser(int userId, EditUserReqDto editUserReqDto) {
