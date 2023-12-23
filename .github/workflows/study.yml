@@ -45,7 +45,7 @@ jobs:
           STATUS=$(curl -o /dev/null -w "%{http_code}" "http://${{ secrets.LIVE_SERVER_IP }}/env")
           echo $STATUS
           if [ $STATUS = 404 ]; then
-            CURRENT_UPSTREAM=blue
+            CURRENT_UPSTREAM=green
           else
             CURRENT_UPSTREAM=$(curl -s "http://${{ secrets.LIVE_SERVER_IP }}/env")
           fi
